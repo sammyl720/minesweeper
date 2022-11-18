@@ -1,3 +1,5 @@
+import { GameGrid } from "./game-grid";
+import { GameBoard, IGameBoard } from "./interfaces";
 import { GameStatus } from "./types";
 
 export interface IGameState {
@@ -6,11 +8,21 @@ export interface IGameState {
    */
   size: number,
   /**
-   * Is this game on going
-   */
-  status: GameStatus,
-  /**
    * Time remaining in seconds
    */
   timeRemaining: number;
+}
+
+export class GameState implements IGameState {
+  size: number;
+  timeRemaining: number;
+
+  public constructor(
+    time = 600,
+    size = 10,
+  ) {
+    this.size = size;
+    this.timeRemaining = time;
+  }
+
 }

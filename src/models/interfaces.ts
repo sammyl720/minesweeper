@@ -1,6 +1,7 @@
 import { getPositionToken, getRandomChance } from "src/utils";
 import { Cell, ICell } from "./Cell";
 import { GameGrid, IGameGrid } from "./game-grid";
+import { IObservable, IObserver } from "./observable";
 import { Position } from "./position";
 import { CellValue, CellViewState, GameStatus, PositionToken, SimplePosition } from "./types";
 
@@ -16,11 +17,12 @@ export interface IGameBoard {
   updateBoard: (callingCell: ICell) => void;
 }
 
-export class GameBoard implements IGameBoard {
+export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
   cells = new Map<PositionToken, Cell>();
   status = GameStatus.OnGoing;
   bombsInBoard: number;
   isInitialized = false;
+  observers: IObserver<IGameBoard>[] = [];
 
   constructor(
     public grid = new GameGrid()
@@ -105,11 +107,27 @@ export class GameBoard implements IGameBoard {
     }
   }
 
+  subscribe(observer: IObserver<IGameBoard>) {
+    if (!this.observers.find(obs => obs === observer)) {
+      this.observers.push(observer);
+    }
+  }
+
+  unsubscribe(observer: IObserver<IGameBoard>) {
+    this.observers = this.observers.filter(obs => obs === observer);
+  }
+
   private gameOver(status: Exclude<GameStatus, 0>) {
     this.status = status;
     switch (status) {
       default:
         break;
     }
+
+    this.emit();
+  }
+
+  emit() {
+    this.observers.forEach(obs => obs.update(this));
   }
 }
