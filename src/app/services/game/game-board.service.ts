@@ -116,7 +116,9 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
       return;
     }
 
-    this.gameBoard?.updateCell(cell.position, CellViewState.Flagged);
+    const newViewState = cell.hasFlag() ? CellViewState.Hidden : CellViewState.Flagged;
+
+    this.gameBoard?.updateCell(cell.position, newViewState);
   }
 
   newGame() {

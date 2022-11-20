@@ -9,8 +9,9 @@
       <div
         *ngFor="let cell of cells"
         (click)="selectCell(cell)"
+        appLongPress
         (contextmenu)="flagCell(cell)"
-        (dblclick)="flagCell(cell)"
+        (longPress)="flagCell(cell)"
         [class.game-board__cell--shown]="cell.viewState == CellViewState.Shown"
         appColorize
         [value]="cell.value"

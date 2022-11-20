@@ -5,6 +5,7 @@
   border-radius: 8px;
   box-shadow: $shadow;
   width: 100%;
+  margin-block-end: 16px;
 }
 
 .game-controls {
@@ -20,7 +21,7 @@
 .game-active-state {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(25%);
   cursor: pointer;
   user-select: none;
 
@@ -43,4 +44,8 @@
   to {
     transform: translateX(-50%) rotate(30deg) scale(1.2);
   }
+}
+
+.control__timer {
+  color: white;
 }

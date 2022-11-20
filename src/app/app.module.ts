@@ -9,6 +9,7 @@ import { ColorizeDirective } from './directives/colorize.directive';
 import { MinutesPipe } from './pipes/minutes.pipe';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { ControlOptionComponent } from './control-option/control-option.component';
+import { LongPressDirective } from './directives/long-press.directive';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ControlOptionComponent } from './control-option/control-option.componen
     ColorizeDirective,
     MinutesPipe,
     ClickOutsideDirective,
-    ControlOptionComponent
+    ControlOptionComponent,
+    LongPressDirective
   ],
   imports: [
     BrowserModule,
