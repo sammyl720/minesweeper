@@ -47,12 +47,24 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
       })
     )
 
-    this.gameEmoji$ = this.gameUpdates$.pipe(map(game => {
-      switch (game.status) {
-        default:
-          return '😁';
-      }
-    }))
+    this.gameEmoji$ = this.gameUpdates$.pipe(
+
+      map(game => {
+        switch (game.status) {
+          case GameStatus.None:
+            return '😐';
+          case GameStatus.OnGoing:
+            return '😃';
+          case GameStatus.Won:
+            return '😎';
+          case GameStatus.Lost:
+            return '😖';
+          case GameStatus.TimeOut:
+            return '😔';
+          default:
+            return '😁';
+        }
+      }))
 
     this.gameSub = this.newGame$.pipe(
       switchMap(() => {
@@ -91,11 +103,6 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
       startNewGame = !!gameOverMessage;
     }
 
-    if (startNewGame) {
-      this.newGame();
-      return;
-    }
-
     this.gameUpdates$.next(subject);
   }
 
@@ -124,6 +131,10 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
   updateDifficulty(level: DifficultyLevel) {
     this.difficultyLevel$.next(level);
     this.newGame();
+  }
+
+  notify() {
+
   }
 
   ngOnDestroy(): void {

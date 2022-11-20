@@ -1,0 +1,18 @@
+<div
+  appClickOutside
+  (clickOutSide)="optionsShown = false"
+  (click)="optionsShown = true"
+  [class.--shown]="optionsShown"
+  class="game-controls__options__item">
+  <p class="option__header">
+    {{ optionGroup.header }}
+  </p>
+  <div class="option__choices">
+    <span
+      *ngFor="let option of optionGroup.options"
+      (click)="select(option.value) && $event.stopPropagation()"
+    >
+    {{ option.label }}
+    </span>
+  </div>
+</div>

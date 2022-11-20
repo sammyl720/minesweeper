@@ -123,6 +123,8 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
   updateCell(cell: SimplePosition, newViewState: CellViewState) {
     if (this.status === GameStatus.None) {
       this.gameStarted.next(true);
+      this.status = GameStatus.OnGoing;
+      this.emit();
     }
 
     const currentCell = this.cells.get(getPositionToken(cell));
@@ -134,11 +136,12 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
       throw new Error("Game is not ongoing");
     }
     if (callingCell.hasBomb() && !callingCell.hasFlag()) {
-      this.gameOver(GameStatus.Lost)
+      this.gameOver(GameStatus.Lost);
+      return;
     } else if (callingCell.canActivateNeighbors()) {
       this.getCellNeighbors(callingCell.position)
         .filter(cell => cell.isSafeHidden())
-        .forEach(cell => cell.viewState != CellViewState.Flagged && this.updateCell(cell.position, CellViewState.Shown))
+        .forEach(cell => cell.viewState != CellViewState.Flagged && this.updateCell(cell.position, CellViewState.Shown));
     }
 
     if (this.onlyBombsLeftHidden()) {

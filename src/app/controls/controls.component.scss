@@ -13,70 +13,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px;
-
-  &__options {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 22px;
-
-    &__item {
-     &.--center {
-      margin-block-start: auto;
-      background:red;
-     }
-      position: relative;
-      cursor: pointer;
-
-      &:hover, &:active {
-        .option__choices {
-          display: flex;
-          opacity: 1;
-          z-index: 1;
-          top: 20px;
-          transition: top 200ms ease-in, opacity 200ms ease-in;
-        }
-      }
-
-      & .option {
-        &__header {
-          color: white;
-        }
-
-        &__choices {
-          // display: hidden;
-          position: absolute;
-          background-color: lighten($color: $background, $amount: 10);
-          color: darken($color: $background, $amount: 100);
-          font-weight: bold;
-          flex-direction: column;
-          display: flex;
-          z-index: -1;
-          top: -5px;
-          opacity: 0;
-
-          transition: top 50ms ease-in, opacity 30ms ease-in;
-
-          &:hover {
-            display: flex;
-          }
-          span {
-            &:not(:last-child) {
-              border-bottom: 1px solid currentColor;
-            }
-
-            &:hover {
-              background-color: $background;
-              cursor: pointer;
-            }
-            padding: 12px;
-          }
-        }
-      }
-    }
-  }
-
 }
+
 
 .game-active-state {
   position: absolute;
@@ -84,5 +22,21 @@
   transform: translateX(-50%);
   font-weight: bold;
   cursor: pointer;
+  font-size: 24px;
   padding: 12px;
+  animation: shake 3s linear infinite alternate;
+}
+
+@keyframes shake {
+  from {
+    transform: translateX(-50%) rotate(-30deg) scale(1.2);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(0) scale(1.4);
+  }
+
+  to {
+    transform: translateX(-50%) rotate(30deg) scale(1.2);
+  }
 }

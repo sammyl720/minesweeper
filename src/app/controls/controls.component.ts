@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, switchMap } from 'rxjs';
 import { DifficultyLevel, GameSize } from 'src/models/game-state';
+import { DEFAULT_GAME_LEVEL_OPTIONS_GROUP, DEFAULT_GAME_SIZE_OPTIONS_GROUP } from 'src/models/settings';
+import { IOptionGroup } from 'src/models/types';
 import { GameBoardService } from '../services/game/game-board.service';
 
 @Component({
@@ -12,6 +14,9 @@ export class ControlsComponent implements OnInit {
   DifficultyLevel = DifficultyLevel;
   GameSize = GameSize;
   gameEmoji$: Observable<string>;
+
+  gameLevelOptionsGroup = DEFAULT_GAME_LEVEL_OPTIONS_GROUP;
+  gameSizeOptionsGroup = DEFAULT_GAME_SIZE_OPTIONS_GROUP;
 
   timeLeft$: Observable<number>;
 

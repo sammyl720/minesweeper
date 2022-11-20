@@ -1,3 +1,14 @@
+
+export interface IOption<T> {
+  label: string,
+  value: T,
+}
+
+export interface IOptionGroup<T> {
+  header: string;
+  options: IOption<T>[]
+}
+
 export enum GameStatus {
   None,
   OnGoing,

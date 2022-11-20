@@ -7,6 +7,8 @@ import { GameBoardComponent } from './game-board/game-board.component';
 import { ControlsComponent } from './controls/controls.component';
 import { ColorizeDirective } from './directives/colorize.directive';
 import { MinutesPipe } from './pipes/minutes.pipe';
+import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { ControlOptionComponent } from './control-option/control-option.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { MinutesPipe } from './pipes/minutes.pipe';
     GameBoardComponent,
     ControlsComponent,
     ColorizeDirective,
-    MinutesPipe
+    MinutesPipe,
+    ClickOutsideDirective,
+    ControlOptionComponent
   ],
   imports: [
     BrowserModule,
