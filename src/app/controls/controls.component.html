@@ -1,0 +1,30 @@
+<div class="game-controls">
+  <div class="game-controls__options">
+    <div class="game-controls__options__item">
+      <p class="option__header">
+        Difficulty
+      </p>
+      <div class="option__choices">
+        <span (click)="updateLevel(DifficultyLevel.Easy)">Easy</span>
+        <span (click)="updateLevel(DifficultyLevel.Medium)">Average</span>
+        <span (click)="updateLevel(DifficultyLevel.Hard)">Hard</span>
+      </div>
+    </div>
+    <div class="game-controls__options__item">
+      <p class="option__header">
+        Size
+      </p>
+      <div class="option__choices">
+        <span (click)="updateSize(GameSize.Small)">Small</span>
+        <span (click)="updateSize(GameSize.Medium)">Medium</span>
+        <span (click)="updateSize(GameSize.Large)">Large</span>
+      </div>
+    </div>
+  </div>
+  <div (click)="newGame()" class="game-active-state">
+    {{ gameEmoji$ | async }}
+  </div>
+  <div class="control__timer">
+    <span>{{ (timeLeft$ | async)! | minutes }}</span>
+  </div>
+</div>

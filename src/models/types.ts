@@ -1,4 +1,5 @@
 export enum GameStatus {
+  None,
   OnGoing,
   Won,
   Lost,
@@ -19,7 +20,9 @@ export enum CellValue {
   Four,
   Five,
   Six,
-  Bomb
+  Seven,
+  Eight,
+  Bomb = "Bomb"
 }
 
 export function getCellValue(surroundingBombs: number): CellValue {

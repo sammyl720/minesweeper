@@ -1,0 +1,46 @@
+@import 'src/assets/styles/vars';
+
+.wrapper {
+  width: fit-content;
+  margin: 12px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.game-board {
+  --size: 10;
+  background-color: $background;
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+  grid-template-rows: repeat(var(--size), 1fr);
+  place-items: center;
+  margin: auto;
+  padding: 2px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 12px -5px rgba(0,0,0,0.3);
+  gap: 2px;
+  width: fit-content;
+}
+
+.game-board__cell {
+  --cell-size: clamp(8px, calc(80vmin / var(--size)), 56px);
+  width: var(--cell-size);
+  height: var(--cell-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: darken($color: $background, $amount: 10);
+  box-shadow: $shadow;
+  cursor: pointer;
+  font-weight: 600;
+  color: currentColor;
+}
+
+.game-board__cell--shown {
+  --shadow-bg: rgba(0,0,0,0.1);
+  background: rgb(255, 255, 255);
+  box-shadow: inset 2px 2px 12px var(--shadow-bg), inset -2px -2px 12px var(--shadow-bg);
+
+}

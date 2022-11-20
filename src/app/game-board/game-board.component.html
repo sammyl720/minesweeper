@@ -1,0 +1,25 @@
+<div class="wrapper">
+  <app-controls></app-controls>
+  <ng-container *ngrxLet="gameCells$ as cells">
+    <div [style.--size]="(size$ | async) ?? 10" class="game-board">
+      <div
+        *ngFor="let cell of cells"
+        (click)="selectCell(cell)"
+        (contextmenu)="flagCell(cell)"
+        [class.game-board__cell--shown]="cell.viewState == CellViewState.Shown"
+        appColorize
+        [value]="cell.value"
+        class="game-board__cell">
+        <span [hidden]="!cell.isShownValue()">
+          {{ cell.value }}
+        </span>
+        <span [style.color]="'black'" [hidden]="cell.viewState != CellViewState.Flagged">
+          &#9873;
+        </span>
+        <span [hidden]="!cell.isShownBomb()">
+          💣
+        </span>
+      </div>
+    </div>
+  </ng-container>
+</div>

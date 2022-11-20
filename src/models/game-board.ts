@@ -1,3 +1,4 @@
+import { interval, map, Observable, ReplaySubject, startWith, switchMap, tap } from "rxjs";
 import { getPositionToken, getRandomChance } from "src/utils";
 import { Cell, ICell } from "./Cell";
 import { GameGrid, IGameGrid } from "./game-grid";
@@ -15,25 +16,50 @@ export interface IGameBoard {
   getCellNeighbors: (cell: SimplePosition) => ICell[],
   updateCell: (cell: SimplePosition, newViewState: CellViewState) => void;
   updateBoard: (callingCell: ICell) => void;
+  gameOver: (status: Exclude<GameStatus, 0 | 1>) => void;
+  isInProgress: () => boolean;
+  timeRemaining$: Observable<number>;
+  showBoard: () => void;
 }
 
 export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
   cells = new Map<PositionToken, Cell>();
-  status = GameStatus.OnGoing;
+  bombCells: PositionToken[] = [];
+  status = GameStatus.None;
   bombsInBoard: number;
   isInitialized = false;
   observers: IObserver<IGameBoard>[] = [];
+  private gameStarted = new ReplaySubject<boolean>(1);
+  timeRemaining$: Observable<number>;
 
   constructor(
-    public grid = new GameGrid()
+    public grid = new GameGrid(),
+    bombsInBoard?: number,
+    time = 1000
   ) {
-    this.bombsInBoard = Math.round((this.grid.square * 2) / 10);
+    this.bombsInBoard = !!bombsInBoard ? bombsInBoard : Math.round((this.grid.square ** 2) / 10);
     this.initBoard();
+
+    this.timeRemaining$ = this.gameStarted.pipe(
+      tap(() => {
+        this.status = GameStatus.OnGoing;
+      }),
+      switchMap(() => {
+        return interval(1000).pipe(
+          map(i => time - i),
+          tap(timeLeft => {
+            if (timeLeft <= 0) {
+              this.gameOver(GameStatus.TimeOut)
+            }
+          })
+        )
+      }),
+      startWith(time)
+    )
   }
 
   initBoard() {
     this.cells.clear();
-    this.status = GameStatus.OnGoing;
 
     let bombsLeft = this.bombsInBoard;
 
@@ -52,15 +78,17 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
         this.cells.set(position.stringify(), currentCell);
         if (isBomb) {
           bombsLeft -= 1;
+          this.bombCells.push(position.stringify());
         }
       }
     }
 
     this.isInitialized = true;
+    this.emit();
   }
 
   private shouldCellBeBomb(currentRow: number, currentCol: number, bombsLeft: number) {
-    const totalCells = this.grid.square * 2;
+    const totalCells = this.grid.square ** 2;
     const cellsFilled = ((currentRow - 1) * this.grid.columns) + (currentCol - 1);
     const cellsLeft = totalCells - cellsFilled;
     const chanceOfBomb = bombsLeft / cellsLeft;
@@ -69,7 +97,7 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
 
 
   isCellBomb(position: SimplePosition) {
-    return this.cells.get(getPositionToken(position))?.value == CellValue.Bomb ?? false;
+    return this.bombCells.includes(getPositionToken(position));
   }
 
   getCellNeighbors({ row, column }: SimplePosition) {
@@ -93,23 +121,35 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
   };
 
   updateCell(cell: SimplePosition, newViewState: CellViewState) {
+    if (this.status === GameStatus.None) {
+      this.gameStarted.next(true);
+    }
+
     const currentCell = this.cells.get(getPositionToken(cell));
     currentCell?.update(newViewState);
   };
 
   updateBoard(callingCell: ICell) {
-    if (this.isCellBomb(callingCell.position) && callingCell.viewState == CellViewState.Shown) {
+    if (this.status != GameStatus.OnGoing) {
+      throw new Error("Game is not ongoing");
+    }
+    if (callingCell.hasBomb() && !callingCell.hasFlag()) {
       this.gameOver(GameStatus.Lost)
-    } else if (callingCell.value == CellValue.Empty) {
+    } else if (callingCell.canActivateNeighbors()) {
       this.getCellNeighbors(callingCell.position)
-        .filter(cell => !this.isCellBomb(cell.position) && cell.viewState == CellViewState.Hidden)
-        .forEach(cell => this.updateCell(cell.position, CellViewState.Shown))
+        .filter(cell => cell.isSafeHidden())
+        .forEach(cell => cell.viewState != CellViewState.Flagged && this.updateCell(cell.position, CellViewState.Shown))
+    }
+
+    if (this.onlyBombsLeftHidden()) {
+      this.gameOver(GameStatus.Won);
     }
   }
 
   subscribe(observer: IObserver<IGameBoard>) {
     if (!this.observers.find(obs => obs === observer)) {
       this.observers.push(observer);
+      observer.update(this);
     }
   }
 
@@ -117,14 +157,34 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
     this.observers = this.observers.filter(obs => obs === observer);
   }
 
-  private gameOver(status: Exclude<GameStatus, 0>) {
-    this.status = status;
-    switch (status) {
-      default:
-        break;
+  onlyBombsLeftHidden() {
+    const cellsHidden = [...this.cells.values()].filter(cell => cell.viewState != CellViewState.Shown);
+    const onlyBombs = cellsHidden.every(cell => cell.value === CellValue.Bomb);
+    return onlyBombs;
+  }
+
+  isInProgress() {
+    return this.status == GameStatus.OnGoing;
+  }
+
+  showBoard() {
+    if (this.isInProgress()) {
+      return;
     }
 
+    for (let cell of this.cells.values()) {
+      cell.viewState = CellViewState.Shown;
+    }
+  }
+
+  gameOver(status: Exclude<GameStatus, 0 | 1>) {
+    this.status = status;
+    this.showBoard();
     this.emit();
+  }
+
+  gameIsOver() {
+    return this.status !== GameStatus.None && this.status !== GameStatus.OnGoing;
   }
 
   emit() {
