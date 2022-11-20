@@ -27,7 +27,7 @@ export const DEFAULT_GAME_SIZE_OPTIONS_GROUP: IOptionGroup<GameSize> = {
   header: 'Size',
   options: [
     {
-      label: 'Easy',
+      label: 'Small',
       value: GameSize.Small
     },
     {
@@ -35,7 +35,7 @@ export const DEFAULT_GAME_SIZE_OPTIONS_GROUP: IOptionGroup<GameSize> = {
       value: GameSize.Medium
     },
     {
-      label: 'Hard',
+      label: 'Large',
       value: GameSize.Large
     }
   ]

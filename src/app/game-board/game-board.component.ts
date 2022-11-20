@@ -13,6 +13,7 @@ import { GameBoardService } from '../services/game/game-board.service';
 export class GameBoardComponent implements OnInit {
   CellViewState = CellViewState;
   game$: Observable<IGameBoard>;
+  isGameOver$: Observable<boolean>;
   gameCells$: Observable<ICell[]>;
   size$: Observable<number>;
   CellValue = CellValue;
@@ -27,7 +28,12 @@ export class GameBoardComponent implements OnInit {
     this.game$ = this.gameService.gameUpdates$;
     this.gameCells$ = this.gameService.gameUpdates$.pipe(
       map(game => [...game.cells.values()])
-    )
+    );
+    this.isGameOver$ = this.game$.pipe(map(
+      ({ status }) => {
+        return status > 1;
+      }
+    ))
 
     this.size$ = this.gameService.gameUpdates$.pipe(
       map(game => game.grid.square)
@@ -44,5 +50,9 @@ export class GameBoardComponent implements OnInit {
   flagCell(cell: ICell) {
     this.gameService.flagCell(cell);
     return false;
+  }
+
+  restartGame() {
+    this.gameService.newGame();
   }
 }

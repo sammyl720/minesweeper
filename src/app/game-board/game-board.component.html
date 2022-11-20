@@ -3,9 +3,14 @@
   <ng-container *ngrxLet="gameCells$ as cells">
     <div [style.--size]="(size$ | async) ?? 10" class="game-board">
       <div
+        (click)="restartGame()"
+        [hidden]="!(isGameOver$ | async)"
+        class="overlay"></div>
+      <div
         *ngFor="let cell of cells"
         (click)="selectCell(cell)"
         (contextmenu)="flagCell(cell)"
+        (dblclick)="flagCell(cell)"
         [class.game-board__cell--shown]="cell.viewState == CellViewState.Shown"
         appColorize
         [value]="cell.value"

@@ -9,8 +9,10 @@
       [optionGroup]="gameSizeOptionsGroup">
     </app-control-option>
   </div>
-  <div (click)="newGame()" class="game-active-state">
-    {{ gameEmoji$ | async }}
+  <div class="game-active-state">
+    <span (click)="newGame()">
+      {{ gameEmoji$ | async }}
+    </span>
   </div>
   <div class="control__timer">
     <span>{{ (timeLeft$ | async)! | minutes }}</span>

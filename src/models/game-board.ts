@@ -17,6 +17,7 @@ export interface IGameBoard {
   updateCell: (cell: SimplePosition, newViewState: CellViewState) => void;
   updateBoard: (callingCell: ICell) => void;
   gameOver: (status: Exclude<GameStatus, 0 | 1>) => void;
+  isGameOver: boolean;
   isInProgress: () => boolean;
   timeRemaining$: Observable<number>;
   showBoard: () => void;
@@ -186,8 +187,8 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
     this.emit();
   }
 
-  gameIsOver() {
-    return this.status !== GameStatus.None && this.status !== GameStatus.OnGoing;
+  get isGameOver() {
+    return this.status > 1;
   }
 
   emit() {

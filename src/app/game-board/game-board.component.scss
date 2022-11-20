@@ -7,9 +7,11 @@
   flex-direction: column;
   gap: 8px;
   align-items: center;
+  user-select: none;
 }
 
 .game-board {
+  position: relative;
   --size: 10;
   background-color: $background;
   display: grid;
@@ -43,4 +45,9 @@
   background: rgb(255, 255, 255);
   box-shadow: inset 2px 2px 12px var(--shadow-bg), inset -2px -2px 12px var(--shadow-bg);
 
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
 }
