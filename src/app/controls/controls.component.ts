@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { distinctUntilChanged, Observable, switchMap } from 'rxjs';
 import { DifficultyLevel, GameSize } from 'src/models/game-state';
 import { DEFAULT_GAME_LEVEL_OPTIONS_GROUP, DEFAULT_GAME_SIZE_OPTIONS_GROUP } from 'src/models/settings';
 import { IOptionGroup } from 'src/models/types';
@@ -24,6 +24,7 @@ export class ControlsComponent implements OnInit {
     private gameService: GameBoardService
   ) {
     this.timeLeft$ = this.gameService.gameUpdates$.pipe(
+      distinctUntilChanged(),
       switchMap(game => game.timeRemaining$)
     );
     this.gameEmoji$ = this.gameService.gameEmoji$;

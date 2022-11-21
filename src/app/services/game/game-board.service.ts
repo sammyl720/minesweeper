@@ -1,12 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, combineLatest, interval, map, Observable, ReplaySubject, sample, startWith, Subscription, switchMap, takeWhile } from 'rxjs';
+import { BehaviorSubject, combineLatest, interval, map, Observable, ReplaySubject, sample, startWith, Subscription, switchMap, takeWhile, tap } from 'rxjs';
 import { ICell } from 'src/models/Cell';
 import { GameGrid } from 'src/models/game-grid';
-import { DifficultyLevel, GameSize, GameState, IGameState } from 'src/models/game-state';
+import { DifficultyLevel, GameSize, GameState, getGameTime, IGameState } from 'src/models/game-state';
 import { GameBoard, IGameBoard } from 'src/models/game-board';
 import { IObserver } from 'src/models/observable';
 import { CellViewState, GameStatus } from 'src/models/types';
 import { DEFAULT_DIFFICULTY_LEVEL, DEFAULT_GAME_SIZE, DEFAULT_GAME_TIME } from 'src/models/settings';
+import { ToastService } from '../toast/toast.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -26,16 +27,22 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
 
   gameSub: Subscription;
 
-  constructor() {
+  constructor(
+    private toastService: ToastService
+  ) {
 
     this.bombs$ = combineLatest([
       this.difficultyLevel$,
       this.gameSize$
-    ]).pipe(map(([level, size]) => {
-      const squareSize: number = size ** 2;
-      const levelAsAPercent = Math.round(level / 100);
-      return Math.round(squareSize * levelAsAPercent)
-    }));
+    ]).pipe(
+      tap(([level, size]) => {
+        this.gameTime$.next(getGameTime(level, size));
+      }),
+      map(([level, size]) => {
+        const squareSize: number = size ** 2;
+        const levelAsAPercent = Math.round(level / 100);
+        return Math.round(squareSize * levelAsAPercent)
+      }));
 
     this.gameState$ = combineLatest([
       this.gameTime$,
@@ -84,23 +91,25 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
   }
 
   update(subject: IGameBoard) {
-    let startNewGame = false;
     if (subject.status != GameStatus.OnGoing) {
       let gameOverMessage = "";
       switch (subject.status) {
         case GameStatus.Won:
-          gameOverMessage = "Wohoo!! You Won!";
+          gameOverMessage = "🎉🎉 Wohoo!! You Won!";
           break;
         case GameStatus.Lost:
-          gameOverMessage = "Oops! That was a bomb. Better luck next time."
+          gameOverMessage = "Oops! That was a 💣. Better luck next time."
           break;
         case GameStatus.TimeOut:
-          gameOverMessage = "Tick Tock, You ran out of time."
+          gameOverMessage = "⏲, You ran out of time."
           break;
         default:
           break;
       }
-      startNewGame = !!gameOverMessage;
+
+      if (!!gameOverMessage) {
+        this.notify(gameOverMessage);
+      }
     }
 
     this.gameUpdates$.next(subject);
@@ -135,8 +144,8 @@ export class GameBoardService implements IObserver<IGameBoard>, OnDestroy {
     this.newGame();
   }
 
-  notify() {
-
+  notify(message: string) {
+    this.toastService.addToast(message);
   }
 
   ngOnDestroy(): void {

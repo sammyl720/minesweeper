@@ -1,0 +1,44 @@
+@import 'src/assets/styles/vars';
+
+.toast-container {
+  width: 100%;
+  position: relative;
+}
+
+.toast {
+  width: 100%;
+  padding: 12px;
+  background: $dark;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px -6px rgba(0,0,0,0.4);
+  color: $light-pink;
+  position: absolute;
+  bottom: -250px;
+  opacity: 0;
+  transition: 300ms ease-in-out;
+
+  &--active {
+    bottom: -60px;
+    opacity: 1;
+  }
+}
+
+.toast__content {
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.toast__actions {
+  cursor: pointer;
+  .toast__action-confirm {
+    transition: 200ms ease-in;
+    &:hover {
+      transform: scale(1.3);
+    }
+  }
+}

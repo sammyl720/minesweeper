@@ -14,4 +14,17 @@ body, html {
 body {
   background: #6B728Eff;
   font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+
+.wrapper {
+  width: fit-content;
+  margin: 12px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  user-select: none;
+  min-width: clamp(85vw, 400px, 98vw);
 }

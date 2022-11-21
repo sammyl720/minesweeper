@@ -1,4 +1,4 @@
-import { interval, map, Observable, ReplaySubject, startWith, switchMap, tap } from "rxjs";
+import { interval, map, Observable, ReplaySubject, startWith, switchMap, takeWhile, tap, timer } from "rxjs";
 import { getPositionToken, getRandomChance } from "src/utils";
 import { Cell, ICell } from "./Cell";
 import { GameGrid, IGameGrid } from "./game-grid";
@@ -46,16 +46,16 @@ export class GameBoard implements IGameBoard, IObservable<IGameBoard> {
         this.status = GameStatus.OnGoing;
       }),
       switchMap(() => {
-        return interval(1000).pipe(
+        return timer(0, 1000).pipe(
           map(i => time - i),
+          takeWhile(() => this.isInProgress()),
           tap(timeLeft => {
             if (timeLeft <= 0) {
               this.gameOver(GameStatus.TimeOut)
             }
           })
         )
-      }),
-      startWith(time)
+      })
     )
   }
 

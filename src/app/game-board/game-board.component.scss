@@ -1,15 +1,5 @@
 @import 'src/assets/styles/vars';
 
-.wrapper {
-  width: fit-content;
-  margin: 12px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  user-select: none;
-}
-
 .game-board {
   position: relative;
   --size: 10;
@@ -21,13 +11,13 @@
   margin: auto;
   border-radius: 8px;
   box-shadow: 1px 1px 12px -5px rgba(0,0,0,0.3);
-  gap: 2px;
+  gap: 1px;
   width: fit-content;
   overflow: hidden;
 }
 
 .game-board__cell {
-  --cell-size: clamp(8px, calc(80vmin / var(--size)), 56px);
+  --cell-size: clamp(12px, calc(clamp(85vw, 400px, 98vw) / var(--size)), 56px);
   width: var(--cell-size);
   height: var(--cell-size);
   display: flex;
@@ -37,6 +27,7 @@
   box-shadow: $shadow;
   cursor: pointer;
   font-weight: 600;
+  font-size: clamp(10px, calc(var(--cell-size) - 4), 24px);
   color: currentColor;
 }
 

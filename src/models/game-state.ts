@@ -43,3 +43,14 @@ export enum GameSize {
   Medium = 20,
   Large = 30
 }
+
+/**
+ * Get the game base of the game level and size
+ * @param level
+ * @param size
+ */
+export function getGameTime(level: DifficultyLevel, size: GameSize) {
+  const baseTime = 120;
+  const extraTime = (size + level) * 6;
+  return baseTime + extraTime;
+}

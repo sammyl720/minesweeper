@@ -10,6 +10,7 @@ import { MinutesPipe } from './pipes/minutes.pipe';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { ControlOptionComponent } from './control-option/control-option.component';
 import { LongPressDirective } from './directives/long-press.directive';
+import { ToastComponent } from './toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { LongPressDirective } from './directives/long-press.directive';
     MinutesPipe,
     ClickOutsideDirective,
     ControlOptionComponent,
-    LongPressDirective
+    LongPressDirective,
+    ToastComponent
   ],
   imports: [
     BrowserModule,

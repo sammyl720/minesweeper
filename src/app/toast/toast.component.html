@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <div class="toast-container">
+    <div
+      [class.toast--active]="!!(toastService.currentToast$ | async)"
+      class="toast">
+      <div class="toast__content">
+        {{ toastService.lastToast$ | async }}
+      </div>
+      <div class="toast__actions">
+        <div (click)="toastService.clearToast()" class="toast__action-confirm">
+          👌
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
